@@ -1,11 +1,11 @@
 <%- include ('../partials/header') %> 
 <div class="container my-5">
     <header>
-        <h1>Blog Post</h1>
+        <h1>Edit: <%= formData.title %></h1>
     </header>
     <hr>
     <div>
-        <%- include ('./_form') %>
+        <%- include ('./_form',{ actionPath: '/blogs/update'}) %>
     </div>
 </div>
 

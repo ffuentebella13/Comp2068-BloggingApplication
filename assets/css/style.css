@@ -19,3 +19,21 @@ html,body{
    text-align:center;
 
 }
+.form-inline{
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+a{
+    text-decoration: none !important;
+}
+.form-inline > .delete{
+    border: none;
+    background: none !important;
+    color: #007bff !important;
+}
+
+.form-inline > .delete:hover{
+    color: #0056b3
+
+}
