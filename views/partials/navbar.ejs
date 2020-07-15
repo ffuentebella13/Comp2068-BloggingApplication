@@ -27,17 +27,36 @@
           <div class="dropdown-menu" aria-labelledby="blogsDropdown">
             <a href="/blogs" class="dropdown-item">Archive</a>
             <div class="dropdown-divider"></div>
+            <% if(authorized) { %> 
             <a href="/blogs/new" class="dropdown-item">New Post</a>
+            <% }%> 
           </div>
+       
         </li>
       </ul>
+      
       <ul class="navbar-nav">
+        <% if(authorized) { %> 
         <li class="nav-item">
-          <a href="/register" class="nav-link">
-            <i class="fa fa-user-plus"></i>
-            Register
+          <a href="/logout" class="nav-link">
+            <i class="fa fa-sign-out"></i>
+            Logout
           </a>
         </li>
+        <% } else { %>
+          <li class="nav-item">
+            <a href="/register" class="nav-link">
+              <i class="fa fa-user-plus"></i>
+              Register
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/login" class="nav-link">
+              <i class="fa fa-sign-in"></i>
+              Login
+            </a>
+          </li>
+        <% }%>
       </ul>
     </div>
   </nav>

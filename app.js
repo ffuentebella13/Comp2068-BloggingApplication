@@ -1,23 +1,14 @@
 //setting up express app
 const express = require('express');
 const app = express();
+require('dotenv').config();
 
 const path = require('path');
 
-//Set View DIR
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-require('dotenv').config();
-
-//assets
-app.use('/css', express.static('assets/css'));
-app.use('/javascript', express.static('assets/javascript'));
-app.use('/images', express.static('assets/images'));
 
 //Mongo Access
 const mongoose = require('mongoose');
 mongoose.connect(process.env.DB_URI,{
-
     auth:{
         user: process.env.DB_USER,
         password: process.env.DB_PASS
@@ -32,13 +23,35 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+
 //setup session
+const passport = require('passport');
 const session = require('express-session');
 app.use(session({
     secret: 'any salty secret here',
     resave: true,
     saveUninitialized: false
 }));
+
+//setting up passport
+app.use(passport.initialize());
+app.use(passport.session());
+const User = require('./models/user');
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+
+
+//Set View DIR
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+//assets
+app.use('/css', express.static('assets/css'));
+app.use('/javascript', express.static('assets/javascript'));
+app.use('/images', express.static('assets/images'));
 
 //setup flash notification
 const flash = require ('connect-flash');
@@ -51,6 +64,13 @@ app.use('/', (req, res,next) => {
     res.locals.flash = req.flash();
     res.locals.formData = req.session.formData || {};
     //console.log(res.locals.flash);
+    req.session.formData = {};
+
+
+
+    //Authentication Helper
+    res.locals.authorized = req.isAuthenticated();
+    if (res.locals.authorized) res.locals.email = req.session.passport.user;
     next();
 });
 

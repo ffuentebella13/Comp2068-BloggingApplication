@@ -1,0 +1,25 @@
+<%- include ('../partials/header') %> 
+<div class="container">
+    <div class="container my-5">
+        <header>
+            <h1>Register New User</h1>
+        </header>
+        <hr>
+        <div>
+              <form action="/authenticate" method="post">
+                <div class="form-group">
+                    <label for="email">Email: </label>
+                    <input type="email" name="email" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password: </label>
+                    <input type="password" name="password" class="form-control">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-dark">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<%- include ('../partials/footer') %> 
