@@ -42,6 +42,24 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
+//setting up passport jwt
+const JwtStrategy = require('passport-jwt').Strategy;
+const opts = {};
+opts.jwtFromRequest = function(req){
+    const token = (req && req.cookies) ? req.cookies
+    ['token'] : null;
+    return token;
+}
+opts.secretOrKey = 'superSecretSaltKey';
+passport.use('jwt', new JwtStrategy(opts, function (jwt_payload, done)
+ {
+     User.findOne({id: jwt_payload.sub}, function(err,user){
+         if(err) return done (err, false);
+         if(user) return done (null, user);
+         return done(null, false);
+     });
+ }));
+
 
 
 //Set View DIR
@@ -78,8 +96,19 @@ app.use('/', (req, res,next) => {
 const routes = require('./routes.js');
 app.use('/', routes);
 
+app.get('/test', (req, res) => {
+    res.status(200).json({message: 'Hello World'});
+  });
+  
+const clientRoot = path.join(__dirname, '/client/build');
+app.use((req, res, next) =>{
+    if( req.method === 'GET' && req.accepts('html') && !req.is('json') && !req.path.includes('.')) {
+        res.sendFile('index.html', {clientRoot});
+    } else next();
+});
+
 // Start our server
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Listening on port ${port}`))
 
 
