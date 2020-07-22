@@ -24,13 +24,15 @@ exports.create = (req, res, next) => {
                 message: 'Not Authorized',
                 error: err                 
             });
-            delete user.password;
-            const token = jwt.sign({user: user}, 'superSecretSaltKey');
-            res.cookie('token', token, {httpOnly: true});
+           
             return res.status(200).json({
                 status: 'success',
                 message: 'Logged in Successfully',
-                user
+                user: {
+                    _id: user._id,
+                    fullname: user.fullname,
+                    email: user.email
+                }
             })
         })
     })(req,res, next);

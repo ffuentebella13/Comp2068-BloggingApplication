@@ -9,29 +9,19 @@ exports.index = async(req, res) => {
         .populate('user')
         .sort({updatedAt: 'desc'});
 
-        res.render(`${viewPath}/index`, {
-        pageTitle: 'Archive',
-        blogs: blogs
-        });
+        res.status(200).json(blogs);
     } catch(error){
-        req.flash('danger', `There was an error displaying the archive: ${error}`);
-        res.redirect('/');
+        res.status(400).json({message: 'There was an error fething the blogs', error})
     }
 
 };
 exports.show = async (req, res) => {
     try{
-    const blog = await Blog.findById(req.params.id)
-    .populate('user');
-    //req.flash('success', 'Message 1');
-    //req.flash('danger', 'Message 2')
-    res.render(`${viewPath}/show`, {
-        pageTitle: blog.title,
-        blog: blog
-    });
+        const blog = await Blog.findById(req.params.id)
+        .populate('user');
+        res.status(200).json(blog);
     } catch(error){
-        req.flash('danger', `There was an error displaying the blog: ${error}`);
-        res.redirect('/');
+        res.status(400).json({message: "There was an error fetching the blog data"});
     }
     };
 
@@ -47,15 +37,10 @@ exports.create = async (req, res) => {
         const user = await User.findOne({email: email});
 
         const blog = await Blog.create({user: user._id , ...req.body});
-        req.flash('success', 'Blog created succesfully');
-        res.redirect(`/blogs/${blog.id}`);
+        res.status(200).json(blog);
     } catch (error){
-        //console.log(err);
-        req.flash('danger', `There was an error creating this blog: 
-        ${error}`);
-        req.session.formData = req.body;
-        res.redirect('/blogs/new');
-    }
+        res.status(400).json({message: "There was an error creating the blog post", error})
+    } 
 
 };
 
@@ -82,12 +67,12 @@ exports.update = async (req, res) => {
       const attributes = {user: user._id, ...req.body}
       await Blog.validate(attributes);
       await Blog.findByIdAndUpdate(attributes.id, attributes);
-  
+      console.log("This is Uppdate");
       req.flash('success', 'The blog was updated successfully');
-      res.redirect(`/blogs/${req.body.id}`);
+      res.redirect(`/api/blogs/${req.body.id}`);
     } catch (error) {
       req.flash('danger', `There was an error updating this blog: ${error}`);
-      res.redirect(`/blogs/${req.body.id}/edit`);
+      res.redirect(`/api/blogs/${req.body.id}/edit`);
     }
   };
   
@@ -95,12 +80,9 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
     try{
         await Blog.deleteOne({_id: req.body.id});
-        req.flash('success', 'The blog was deleted successfully');
-        res.redirect(`/blogs`);
+        res.status(200).json({message: "Deleted."})
     }
     catch (error){
-        req.flash('danger', `There was an error deleting this blog: 
-        ${error}`);
-        res.redirect('/blogs');
+        res.status(400).json({message: "There was an error deleting the blog"})
     }
 }

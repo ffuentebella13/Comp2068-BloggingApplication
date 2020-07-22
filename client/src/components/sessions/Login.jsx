@@ -1,57 +1,84 @@
 import React from 'react';
 import { useState } from 'react';
 import Axios from 'axios';
-import { Form, Container, Button } from 'react-bootstrap';
+import { Form, Container } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-const Login = props => {
-    const [inputs, setInputs] = useState({
-        email: '',
-        password: ''
-    });
-    
-    const handleSubmit = async event => {
-        event.preventDefault();
+const Login = ({setUser}) => {
+  const [inputs, setInputs] = useState({
+    email: '',
+    password: ''
+  });
 
-        const resp = await Axios.post('/authenticate', 
-        inputs);
-        console.log(resp);
-    };
+  const [redirect, setRedirect] = useState(false);
 
-    const handleInputChange = event => {
-        event.persist();
+  const handleSubmit = async event => {
+    event.preventDefault();
 
-        const {name, value} = event.target;
-        setInputs(inputs => ({
-            ...inputs,
-            [name]: value 
-        }));
-        console.log(inputs);
-    };
+    try {
+      const resp = await Axios.post('/api/authenticate', inputs);
 
+      if (resp.status === 200) {
+        setUser(resp.data.user);
+        toast('You have logged in successfully', {
+          type: toast.TYPE.SUCCESS
+        });
+        setRedirect(true);
+      } else {
+        toast("There was an issue logging you in. Please check your credentials.", {
+          type: toast.TYPE.ERROR
+        });
+      }
+    } catch (error) {
+      toast("There was an issue logging you in. Please check your credentials.", {
+        type: toast.TYPE.ERROR
+      });
+    }
+  };
 
-    return (
-        <Container className="my-5">
-        <header>
-            <h1>Register New User</h1>
-        </header>
-        <hr/>
+  const handleInputChange = event => {
+    event.persist();
 
-            <Form onSubmit={handleSubmit}>
-                <Form.Group>
-                    <label htmlFor="email">Email: </label>
-                    <Form.Control type="email" name="email" onChange={handleInputChange} value={inputs.email}/>
-                </Form.Group>
-                <Form.Group>
-                    <label htmlFor="password">Password: </label>
-                    <Form.Control type="password" name="password" onChange={handleInputChange} value={inputs.password}/>
-                </Form.Group>
-                <Form.Group>
-                    <button className="btn btn-dark">Login</button>
-                </Form.Group>
-            </Form>
+    const {name, value} = event.target;
 
+    setInputs(inputs => ({
+      ...inputs,
+      [name]: value
+    }));
+    console.log(inputs);
+  };
+
+  if (redirect) {
+    return (<Redirect to="/blogs"/>);
+  }
+
+  return (
+    <Container className="my-5">
+      <header>
+        <h1>Login</h1>
+      </header>
+
+      <hr/>
+      
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          <label htmlFor="email">Email:</label>
+          <Form.Control type="email" name="email" onChange={handleInputChange} value={inputs.email}/>
+        </Form.Group>
+
+        <Form.Group>
+          <label htmlFor="password">Password:</label>
+          <Form.Control type="password" name="password" onChange={handleInputChange} value={inputs.password}/>
+        </Form.Group>
+
+        <Form.Group>
+          <button className="btn btn-primary">Login</button>
+        </Form.Group>
+      </Form>
+        
     </Container>
-    );
+  );
 };
 
 export default Login;
