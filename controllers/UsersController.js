@@ -8,17 +8,17 @@ exports.new = async (req,res) => {
     });
 };
 
+
 exports.create = async (req,res) =>{
     try{
         const user = new User(req.body);
         await User.register(user, req.body.password);
-        req.flash('success',`Welcome, ${user.fullname}. Thank you for registering.`);
-        res.redirect('/');
+        //const register = await User.create(req.body);
+        res.status(200).json(user);
+        console.log(hello);
     }
     catch(error){
-        console.log(error);
-        req.flash('danger',error.message);
-        req.session.formData = req.body;
-        res.redirect(`/register`)
+        console.log("error: " + error)
+        res.status(400).json({message: "There was an error Registering this Account", error})
     }
 };

@@ -8,6 +8,7 @@ import Logout from './sessions/Logout';
 
 import Blogs from './blogs/Index';
 import NewBlog from './blogs/New';
+import NewUser from './users/New';
 import EditBlog from './blogs/Edit';
 
 function Routes ({user, setUser}) {
@@ -35,6 +36,7 @@ function Routes ({user, setUser}) {
       }/>
       <Route exact path="/blogs/new" component={NewBlog}/>
       <Route exact path="/blogs/edit" component={EditBlog}/>
+      <Route exact path="/users/new" component={NewUser}/>
     </Switch>
   );
 }

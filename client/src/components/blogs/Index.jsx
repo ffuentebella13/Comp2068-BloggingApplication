@@ -51,7 +51,7 @@ const Index = function ({user}){
                     {blog.title}
                   </h5>
   
-                  {blog.user ? (
+                  {blog.user  ? (
                     <small>~{blog.user.fullname}</small>
                   ) : null}
                 </div>
@@ -66,7 +66,9 @@ const Index = function ({user}){
                   {blog.synopsis}
                 </p>
               </div>
-  
+              {console.log("Id from Login: " + user._id)}
+
+              {console.log("id From blog Db " + blog._id)}
               {user ? (
                 <div className="card-footer">
                   <Link to={{
