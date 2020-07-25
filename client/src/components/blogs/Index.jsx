@@ -66,10 +66,8 @@ const Index = function ({user}){
                   {blog.synopsis}
                 </p>
               </div>
-              {console.log("Id from Login: " + user._id)}
-
-              {console.log("id From blog Db " + blog._id)}
-              {user ? (
+              
+              { blog.user.email === user.email ? (
                 <div className="card-footer">
                   <Link to={{
                     pathname: "/blogs/edit",
